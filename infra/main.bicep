@@ -82,6 +82,12 @@ param secretsObject object
 ])
 param secretsPermissions array
 
+@description('Minimum number of App Service Plan instances when autoscale is enabled')
+param appServicePlanMinCapacity int
+
+@description('Maximum number of App Service Plan instances when autoscale is enabled')
+param appServicePlanMaxCapacity int
+
 @description('Tags to apply to all resources')
 param resourceTags object
 
@@ -162,6 +168,18 @@ module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
     principalId: appServiceModule.outputs.principalId
     secretsPermissions: secretsPermissions
   }
+}
+
+module appServiceAutoscale 'modules/app-service-autoscale.bicep' = if (environment == 'prod') {
+  name: 'appServiceAutoscale'
+  scope: resourceGroup(resourceGroupFullName)
+  params: {
+    location: location
+    appServicePlanName: appServicePlanNameFull
+    minCapacity: appServicePlanMinCapacity
+    maxCapacity: appServicePlanMaxCapacity
+  }
+  dependsOn: [appServiceModule]
 }
 
 // !: --- Outputs ---
