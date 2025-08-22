@@ -47,6 +47,12 @@
     "keyVaultEnabledForTemplateDeployment": {
       "value": true
     },
+    "appServicePlanMinCapacity": {
+      "value": 1
+    },
+    "appServicePlanMaxCapacity": {
+      "value": 3
+    },
     "resourceTags": {
       "value": {
         "owner": "Neurothrone",
