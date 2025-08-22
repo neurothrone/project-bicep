@@ -1,8 +1,8 @@
 targetScope = 'subscription'
 
 // !: --- Parameters ---
-@description('Base name for the resource group')
-param resourceGroupBaseName string
+@description('Name of the resource group to create.')
+param resourceGroupName string
 
 @description('Primary location for all resources (deployment metadata location for subscription deployment).')
 param location string
@@ -19,9 +19,20 @@ param environment string
 param storageBaseName string
 
 @description('Storage SKU')
+@allowed([
+  'Standard_LRS'
+  'Standard_GRS'
+  'Standard_ZRS'
+  'Premium_LRS'
+])
 param storageSku string
 
 @description('Storage kind')
+@allowed([
+  'StorageV2'
+  'FileStorage'
+  'BlockBlobStorage'
+])
 param storageKind string
 
 @description('App Service Plan name')
@@ -40,18 +51,21 @@ param appServiceSiteName string
 @description('Enforce HTTPS for the App Service')
 param appServiceHttpsOnly bool
 
+// !: --- Variables ---
+var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
+
 // !: --- Modules ---
 module resourceGroupModule 'modules/resource-group.bicep' = {
   name: 'resourceGroupModule'
   params: {
-    name: 'rg-${resourceGroupBaseName}-${environment}'
+    name: resourceGroupFullName
     location: location
   }
 }
 
 module storageModule 'modules/storage.bicep' = {
   name: 'storageModule'
-  scope: resourceGroup(resourceGroupModule.name)
+  scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
     // Storage name cannot exceed 24 characters and can only contain
@@ -59,7 +73,7 @@ module storageModule 'modules/storage.bicep' = {
     // - storageBaseName is max 7 characters
     // - uniqueString is 13 characters
     // - environment is max 4 characters
-    name: '${storageBaseName}${uniqueString(resourceGroupModule.name)}${environment}'
+    name: '${storageBaseName}${uniqueString(subscription().id, resourceGroupFullName)}${environment}'
     skuName: storageSku
     kind: storageKind
   }
@@ -67,7 +81,7 @@ module storageModule 'modules/storage.bicep' = {
 
 module appServiceModule 'modules/app-service.bicep' = {
   name: 'appServiceModule'
-  scope: resourceGroup(resourceGroupModule.name)
+  scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
     planName: '${appServicePlanName}-${environment}'
@@ -76,11 +90,16 @@ module appServiceModule 'modules/app-service.bicep' = {
     siteName: '${appServiceSiteName}-${environment}'
     httpsOnly: appServiceHttpsOnly
     environment: environment
-    storageName: storageModule.name
+    storageName: storageModule.outputs.nameOutput
   }
 }
 
 // !: --- Outputs ---
-output resourceGroupNameOutput string = resourceGroupModule.name
+@description('The name of the created resource group')
+output resourceGroupNameOutput string = resourceGroupModule.outputs.nameOutput
+
+@description('The name of the created storage account')
 output storageAccountNameOutput string = storageModule.outputs.nameOutput
-output appServiceDefaultHostNameOutput string = appServiceModule.outputs.defaultHostName
+
+@description('The URL of the deployed Web App')
+output webAppUrlOutput string = appServiceModule.outputs.webAppUrlOutput
