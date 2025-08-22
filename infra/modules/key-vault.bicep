@@ -14,6 +14,19 @@ param keyVaultName string
 ])
 param skuName string
 
+@description('SKU family for the Key Vault')
+@allowed([
+  'A'
+  'B'
+])
+param skuFamily string
+
+@description('Enable Key Vault for deployment')
+param enabledForDeployment bool
+
+@description('Enable Key Vault for template deployment')
+param enabledForTemplateDeployment bool
+
 @description('Name of the Web App to provide access to the Key Vault.')
 param webAppName string
 
@@ -42,11 +55,11 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-11-01' = {
   name: keyVaultName
   location: location
   properties: {
-    enabledForDeployment: true
-    enabledForTemplateDeployment: true
+    enabledForDeployment: enabledForDeployment
+    enabledForTemplateDeployment: enabledForTemplateDeployment
     sku: {
       name: skuName
-      family: 'A'
+      family: skuFamily
     }
     tenantId: subscription().tenantId
     accessPolicies: [
