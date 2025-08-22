@@ -13,13 +13,16 @@ param minCapacity int
 @description('Maximum number of instances for autoscale')
 param maxCapacity int
 
+// !: --- Variables ---
+var appServicePlanResourceId = resourceId('Microsoft.Web/serverfarms', appServicePlanName)
+
 // !: --- Resources ---
 resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
   name: 'autoscale-${appServicePlanName}'
   location: location
   properties: {
     enabled: true
-    targetResourceUri: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
+    targetResourceUri: appServicePlanResourceId
     profiles: [
       {
         name: 'Default'
@@ -33,7 +36,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
+              metricResourceUri: appServicePlanResourceId
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -52,7 +55,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
+              metricResourceUri: appServicePlanResourceId
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
