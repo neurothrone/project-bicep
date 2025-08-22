@@ -39,3 +39,16 @@ az deployment sub create \
   --parameters @infra/parameters/prod.json \
   --parameters @infra/secrets.json
 ```
+
+## Tips
+
+### Purge the Key Vaults
+
+If, like me, you have been a bit too enthusiastic with your key vault experiments and now face conflicts, you can purge
+them with the following commands.
+
+```shell
+az keyvault list-deleted
+
+az keyvault purge --name <keyvault-name>
+```
