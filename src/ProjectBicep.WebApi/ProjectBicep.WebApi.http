@@ -1,0 +1,6 @@
+@ProjectBicep.WebApi_HostAddress = http://localhost:5283
+
+GET {{ProjectBicep.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
