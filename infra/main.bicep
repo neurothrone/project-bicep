@@ -82,17 +82,14 @@ param secretsObject object
 ])
 param secretsPermissions array
 
+@description('Tags to apply to all resources')
+param resourceTags object
+
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
 var appServicePlanNameFull = '${appServicePlanName}-${environment}'
 var webAppNameFull = '${appServiceSiteName}-${environment}'
 var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
-
-var resourceTags = {
-  owner: 'Neurothrone'
-  environment: environment
-  costCenter: 'IT'
-}
 
 // !: --- Modules ---
 module resourceGroupModule 'modules/resource-group.bicep' = {

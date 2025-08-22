@@ -46,6 +46,13 @@
     },
     "keyVaultEnabledForTemplateDeployment": {
       "value": true
+    },
+    "resourceTags": {
+      "value": {
+        "owner": "Neurothrone",
+        "environment": "dev",
+        "costCenter": "IT"
+      }
     }
   }
 }
