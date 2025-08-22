@@ -85,6 +85,7 @@ module storageModule 'modules/storage.bicep' = {
     kind: storageKind
     tags: resourceTags
   }
+  dependsOn: [resourceGroupModule]
 }
 
 module appServiceModule 'modules/app-service.bicep' = {
@@ -101,6 +102,7 @@ module appServiceModule 'modules/app-service.bicep' = {
     storageName: storageModule.outputs.nameOutput
     tags: resourceTags
   }
+  dependsOn: [resourceGroupModule]
 }
 
 // !: --- Outputs ---
