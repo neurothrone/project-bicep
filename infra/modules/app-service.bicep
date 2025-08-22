@@ -26,6 +26,10 @@ param environment string
 @description('Storage account name')
 param storageName string
 
+@description('Tags to apply to the resource')
+param tags object
+
+// !: --- Variables ---
 // Map SKU name to tier
 var skuTier = {
   F1: 'Free'
@@ -45,6 +49,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
   properties: {
     reserved: true // Linux plan (set to false for Windows)
   }
+  tags: tags
 }
 
 resource webApp 'Microsoft.Web/sites@2024-11-01' = {
@@ -57,6 +62,7 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
       ftpsState: 'Disabled'
     }
   }
+  tags: tags
 }
 
 resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {

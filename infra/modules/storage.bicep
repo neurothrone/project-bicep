@@ -26,6 +26,9 @@ param skuName string
 ])
 param kind string
 
+@description('Tags to apply to the resource')
+param tags object
+
 // !: --- Resources ---
 resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: name
@@ -34,6 +37,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
     name: skuName
   }
   kind: kind
+  tags: tags
 }
 
 // !: --- Outputs ---

@@ -8,10 +8,14 @@ param name string
 @description('Location for the resource group')
 param location string
 
+@description('Tags to apply to the resource')
+param tags object
+
 // !: --- Resources ---
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   name: name
   location: location
+  tags: tags
 }
 
 // !: --- Outputs ---

@@ -54,12 +54,19 @@ param appServiceHttpsOnly bool
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
 
+var resourceTags = {
+  owner: 'Neurothrone'
+  environment: environment
+  costCenter: 'IT'
+}
+
 // !: --- Modules ---
 module resourceGroupModule 'modules/resource-group.bicep' = {
   name: 'resourceGroupModule'
   params: {
     name: resourceGroupFullName
     location: location
+    tags: resourceTags
   }
 }
 
@@ -76,6 +83,7 @@ module storageModule 'modules/storage.bicep' = {
     name: '${storageBaseName}${uniqueString(subscription().id, resourceGroupFullName)}${environment}'
     skuName: storageSku
     kind: storageKind
+    tags: resourceTags
   }
 }
 
@@ -91,6 +99,7 @@ module appServiceModule 'modules/app-service.bicep' = {
     httpsOnly: appServiceHttpsOnly
     environment: environment
     storageName: storageModule.outputs.nameOutput
+    tags: resourceTags
   }
 }
 
