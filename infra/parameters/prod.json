@@ -1,2 +1,33 @@
 {
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupBaseName": {
+      "value": "project-bicep"
+    },
+    "location": {
+      "value": "swedencentral"
+    },
+    "storageBaseName": {
+      "value": "storage"
+    },
+    "storageSku": {
+      "value": "Standard_LRS"
+    },
+    "storageKind": {
+      "value": "StorageV2"
+    },
+    "appServicePlanName": {
+      "value": "project-bicep-app-plan"
+    },
+    "appServicePlanSku": {
+      "value": "S1"
+    },
+    "appServiceSiteName": {
+      "value": "project-bicep-app"
+    },
+    "appServiceHttpsOnly": {
+      "value": true
+    }
+  }
 }
