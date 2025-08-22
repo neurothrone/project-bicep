@@ -71,9 +71,6 @@ param keyVaultEnabledForDeployment bool
 @description('Enable Key Vault for template deployment')
 param keyVaultEnabledForTemplateDeployment bool
 
-@description('Enforce HTTPS for the Key Vault')
-param keyVaultHttpsOnly bool
-
 @description('Secrets to create in the Key Vault')
 @secure()
 param secretsObject object
@@ -87,6 +84,9 @@ param secretsPermissions array
 
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
+var appServicePlanNameFull = '${appServicePlanName}-${environment}'
+var webAppNameFull = '${appServiceSiteName}-${environment}'
+var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
 
 var resourceTags = {
   owner: 'Neurothrone'
@@ -122,39 +122,48 @@ module storageModule 'modules/storage.bicep' = {
   dependsOn: [resourceGroupModule]
 }
 
-module appServiceModule 'modules/app-service.bicep' = {
-  name: 'appServiceModule'
-  scope: resourceGroup(resourceGroupFullName)
-  params: {
-    location: location
-    planName: '${appServicePlanName}-${environment}'
-    skuName: appServicePlanSku
-    capacity: appServiceCapacity
-    siteName: '${appServiceSiteName}-${environment}'
-    httpsOnly: appServiceHttpsOnly
-    environment: environment
-    storageName: storageModule.outputs.nameOutput
-    tags: resourceTags
-  }
-  dependsOn: [resourceGroupModule]
-}
-
 module keyVaultModule 'modules/key-vault.bicep' = {
   name: 'keyVaultModule'
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    keyVaultName: 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
+    keyVaultName: keyVaultNameFull
     skuName: keyVaultSkuName
     skuFamily: keyVaultSkuFamily
     enabledForDeployment: keyVaultEnabledForDeployment
     enabledForTemplateDeployment: keyVaultEnabledForTemplateDeployment
-    httpsOnly: keyVaultHttpsOnly
-    appServicePlanId: appServiceModule.outputs.appServicePlanIdOutput
-    webAppName: appServiceModule.outputs.webAppNameOutput
     secretsObject: secretsObject
-    secretsPermissions: secretsPermissions
     tags: resourceTags
+  }
+  dependsOn: [resourceGroupModule]
+}
+
+module appServiceModule 'modules/app-service.bicep' = {
+  name: 'appServiceModule'
+  scope: resourceGroup(resourceGroupFullName)
+  params: {
+    location: location
+    planName: appServicePlanNameFull
+    skuName: appServicePlanSku
+    capacity: appServiceCapacity
+    siteName: webAppNameFull
+    httpsOnly: appServiceHttpsOnly
+    environment: environment
+    storageName: storageModule.outputs.nameOutput
+    keyVaultName: keyVaultNameFull
+    secretsObject: secretsObject
+    tags: resourceTags
+  }
+  dependsOn: [resourceGroupModule, keyVaultModule]
+}
+
+module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
+  name: 'keyVaultAccessModule'
+  scope: resourceGroup(resourceGroupFullName)
+  params: {
+    keyVaultName: keyVaultNameFull
+    principalId: appServiceModule.outputs.principalId
+    secretsPermissions: secretsPermissions
   }
 }
 

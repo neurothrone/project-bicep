@@ -27,25 +27,9 @@ param enabledForDeployment bool
 @description('Enable Key Vault for template deployment')
 param enabledForTemplateDeployment bool
 
-@description('Name of the Web App to provide access to the Key Vault.')
-param webAppName string
-
-@description('ID of the App Service Plan to associate with the Web App.')
-param appServicePlanId string
-
-@description('Enforce HTTPS for the Web App')
-param httpsOnly bool
-
 @description('Secrets to create in the Key Vault')
 @secure()
 param secretsObject object
-
-@description('Permissions for the Web App to access secrets in the Key Vault')
-@allowed([
-  'get'
-  'list'
-])
-param secretsPermissions array
 
 @description('Tags to apply to the resource')
 param tags object
@@ -62,15 +46,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-11-01' = {
       family: skuFamily
     }
     tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        tenantId: subscription().tenantId
-        objectId: subscription().tenantId
-        permissions: {
-          secrets: secretsPermissions
-        }
-      }
-    ]
+    accessPolicies: []
   }
   tags: tags
 }
@@ -84,43 +60,6 @@ resource secrets 'Microsoft.KeyVault/vaults/secrets@2024-11-01' = [
     }
   }
 ]
-
-resource webApp 'Microsoft.Web/sites@2024-11-01' = {
-  name: webAppName
-  location: location
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    serverFarmId: appServicePlanId
-    siteConfig: {
-      appSettings: [
-        for (secret, i) in secretsObject.secrets: {
-          name: secret.secretName
-          value: '@Microsoft.KeyVault(SecretUri=${secrets[i].properties.secretUriWithVersion})'
-        }
-      ]
-    }
-    httpsOnly: httpsOnly
-  }
-  tags: tags
-}
-
-resource accessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2024-11-01' = {
-  parent: keyVault
-  name: 'add'
-  properties: {
-    accessPolicies: [
-      {
-        tenantId: subscription().tenantId
-        objectId: webApp.identity.principalId
-        permissions: {
-          secrets: secretsPermissions
-        }
-      }
-    ]
-  }
-}
 
 //!: --- Outputs ---
 @description('The name of the created Key Vault')

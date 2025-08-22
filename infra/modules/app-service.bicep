@@ -26,6 +26,13 @@ param environment string
 @description('Storage account name')
 param storageName string
 
+@description('Name of the Key Vault that the Web App will use')
+param keyVaultName string
+
+@description('Secrets that the Web App will use')
+@secure()
+param secretsObject object
+
 @description('Tags to apply to the resource')
 param tags object
 
@@ -36,6 +43,21 @@ var skuTier = {
   B1: 'Basic'
   S1: 'Standard'
 }[skuName]
+
+var staticAppSettings = {
+  ENVIRONMENT: environment
+  STORAGE_NAME: storageName
+  SCM_DO_BUILD_DURING_DEPLOYMENT: 'true'
+}
+
+var secretAppSettings = reduce(
+  secretsObject.secrets,
+  {},
+  (acc, secret) =>
+    union(acc, {
+      '${secret.secretName}': '@Microsoft.KeyVault(SecretName=${secret.secretName};VaultName=${keyVaultName})'
+    })
+)
 
 // !: --- Resources ---
 resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
@@ -55,6 +77,9 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
 resource webApp 'Microsoft.Web/sites@2024-11-01' = {
   name: siteName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: httpsOnly
@@ -68,11 +93,7 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
 resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
   parent: webApp
   name: 'appsettings'
-  properties: {
-    ENVIRONMENT: environment
-    STORAGE_NAME: storageName
-    SCM_DO_BUILD_DURING_DEPLOYMENT: 'true'
-  }
+  properties: union(staticAppSettings, secretAppSettings)
 }
 
 // !: --- Outputs ---
@@ -87,3 +108,6 @@ output defaultHostNameOutput string = webApp.properties.defaultHostName
 
 @description('The URL of the Web App')
 output webAppUrlOutput string = 'https://${webApp.properties.defaultHostName}'
+
+@description('The principal ID of the Web App identity')
+output principalId string = webApp.identity.principalId
