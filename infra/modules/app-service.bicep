@@ -76,6 +76,12 @@ resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
 }
 
 // !: --- Outputs ---
+@description('The resource ID of the App Service Plan')
+output appServicePlanIdOutput string = appServicePlan.id
+
+@description('The name of the Web App')
+output webAppNameOutput string = webApp.name
+
 @description('Default host name of the Web App')
 output defaultHostNameOutput string = webApp.properties.defaultHostName
 

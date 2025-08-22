@@ -51,6 +51,40 @@ param appServiceSiteName string
 @description('Enforce HTTPS for the App Service')
 param appServiceHttpsOnly bool
 
+@description('SKU name for the Key Vault')
+@allowed([
+  'standard'
+  'premium'
+])
+param keyVaultSkuName string
+
+@description('SKU family for the Key Vault')
+@allowed([
+  'A'
+  'B'
+])
+param keyVaultSkuFamily string
+
+@description('Enable Key Vault for deployment')
+param keyVaultEnabledForDeployment bool
+
+@description('Enable Key Vault for template deployment')
+param keyVaultEnabledForTemplateDeployment bool
+
+@description('Enforce HTTPS for the Key Vault')
+param keyVaultHttpsOnly bool
+
+@description('Secrets to create in the Key Vault')
+@secure()
+param secretsObject object
+
+@description('Permissions for the Web App to access secrets in the Key Vault')
+@allowed([
+  'get'
+  'list'
+])
+param secretsPermissions array
+
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
 
@@ -103,6 +137,25 @@ module appServiceModule 'modules/app-service.bicep' = {
     tags: resourceTags
   }
   dependsOn: [resourceGroupModule]
+}
+
+module keyVaultModule 'modules/key-vault.bicep' = {
+  name: 'keyVaultModule'
+  scope: resourceGroup(resourceGroupFullName)
+  params: {
+    location: location
+    keyVaultName: 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
+    skuName: keyVaultSkuName
+    skuFamily: keyVaultSkuFamily
+    enabledForDeployment: keyVaultEnabledForDeployment
+    enabledForTemplateDeployment: keyVaultEnabledForTemplateDeployment
+    httpsOnly: keyVaultHttpsOnly
+    appServicePlanId: appServiceModule.outputs.appServicePlanIdOutput
+    webAppName: appServiceModule.outputs.webAppNameOutput
+    secretsObject: secretsObject
+    secretsPermissions: secretsPermissions
+    tags: resourceTags
+  }
 }
 
 // !: --- Outputs ---
