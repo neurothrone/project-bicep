@@ -11,20 +11,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{4EA8E271
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{DA73282D-72C5-4FEB-AE89-9280A7379FF3}"
 	ProjectSection(SolutionItems) = preProject
-		infra\modules\storage.bicep = infra\modules\storage.bicep
-		infra\modules\resource-group.bicep = infra\modules\resource-group.bicep
 		infra\modules\app-service.bicep = infra\modules\app-service.bicep
+		infra\modules\resource-group.bicep = infra\modules\resource-group.bicep
+		infra\modules\storage.bicep = infra\modules\storage.bicep
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "parameters", "parameters", "{4458D58B-1F76-40A6-B057-C818C0FBAB93}"
 	ProjectSection(SolutionItems) = preProject
 		infra\parameters\dev.json = infra\parameters\dev.json
-		infra\parameters\test.json = infra\parameters\test.json
 		infra\parameters\prod.json = infra\parameters\prod.json
+		infra\parameters\test.json = infra\parameters\test.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{68021CF4-0E8D-44D8-A6B1-4EA763E135C6}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		README.md = README.md
 	EndProjectSection
 EndProject
