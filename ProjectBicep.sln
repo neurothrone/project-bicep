@@ -7,6 +7,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{4EA8E271-C6BF-4B49-B8D4-C4CA649C7088}"
 	ProjectSection(SolutionItems) = preProject
 		infra\main.bicep = infra\main.bicep
+		infra\secrets.json = infra\secrets.json
+		infra\secrets.sample.json = infra\secrets.sample.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{DA73282D-72C5-4FEB-AE89-9280A7379FF3}"
@@ -14,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{DA73
 		infra\modules\app-service.bicep = infra\modules\app-service.bicep
 		infra\modules\resource-group.bicep = infra\modules\resource-group.bicep
 		infra\modules\storage.bicep = infra\modules\storage.bicep
+		infra\modules\key-vault.bicep = infra\modules\key-vault.bicep
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "parameters", "parameters", "{4458D58B-1F76-40A6-B057-C818C0FBAB93}"
