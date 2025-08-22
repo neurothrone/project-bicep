@@ -32,7 +32,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
           // Scale out on high CPU usage (>70%)
           {
             metricTrigger: {
-              metricName: 'Percentage CPU'
+              metricName: 'CpuPercentage'
               metricResourceUri: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
               timeGrain: 'PT1M'
               statistic: 'Average'
@@ -51,7 +51,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
           // Scale in on low CPU usage (<30%)
           {
             metricTrigger: {
-              metricName: 'Percentage CPU'
+              metricName: 'CpuPercentage'
               metricResourceUri: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
               timeGrain: 'PT1M'
               statistic: 'Average'
