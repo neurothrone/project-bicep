@@ -2,7 +2,10 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "resourceGroupBaseName": {
+    "environment": {
+      "value": "test"
+    },
+    "resourceGroupName": {
       "value": "project-bicep"
     },
     "location": {
@@ -22,6 +25,9 @@
     },
     "appServicePlanSku": {
       "value": "B1"
+    },
+    "appServiceCapacity": {
+      "value": 1
     },
     "appServiceSiteName": {
       "value": "project-bicep-app"
