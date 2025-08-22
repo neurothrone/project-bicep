@@ -26,19 +26,24 @@ param environment string
 @description('Storage account name')
 param storageName string
 
+// Map SKU name to tier
+var skuTier = {
+  F1: 'Free'
+  B1: 'Basic'
+  S1: 'Standard'
+}[skuName]
+
 // !: --- Resources ---
 resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
   name: planName
   location: location
   sku: {
     name: skuName
-//     tier: 'Basic'
+    tier: skuTier
     capacity: capacity
   }
   properties: {
     reserved: true // Linux plan (set to false for Windows)
-    //     perSiteScaling: false
-    //     maximumElasticWorkerCount: 1
   }
 }
 
@@ -48,9 +53,9 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: httpsOnly
-//     siteConfig: {
-//       ftpsState: 'Disabled'
-//     }
+    siteConfig: {
+      ftpsState: 'Disabled'
+    }
   }
 }
 
@@ -65,4 +70,8 @@ resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
 }
 
 // !: --- Outputs ---
-output defaultHostName string = webApp.properties.defaultHostName
+@description('Default host name of the Web App')
+output defaultHostNameOutput string = webApp.properties.defaultHostName
+
+@description('The URL of the Web App')
+output webAppUrlOutput string = 'https://${webApp.properties.defaultHostName}'
