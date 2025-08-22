@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{DA73282D-72C5-4FEB-AE89-9280A7379FF3}"
 	ProjectSection(SolutionItems) = preProject
 		infra\modules\app-service.bicep = infra\modules\app-service.bicep
+		infra\modules\app-service-autoscale.bicep = infra\modules\app-service-autoscale.bicep
 		infra\modules\key-vault.bicep = infra\modules\key-vault.bicep
 		infra\modules\key-vault-access.bicep = infra\modules\key-vault-access.bicep
 		infra\modules\resource-group.bicep = infra\modules\resource-group.bicep
