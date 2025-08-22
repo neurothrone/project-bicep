@@ -1,6 +1,5 @@
-@ProjectBicep.WebApi_HostAddress = http://localhost:5283
+@ApiBaseUrl = https://localhost:7001
 
-GET {{ProjectBicep.WebApi_HostAddress}}/weatherforecast/
+### Get Weather Forecast
+GET {{ApiBaseUrl}}/weatherforecast/
 Accept: application/json
-
-###
