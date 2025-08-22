@@ -1,22 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectBicep.WebApi", "src\ProjectBicep.WebApi\ProjectBicep.WebApi.csproj", "{436E7189-E096-42AB-AF4B-78D2D653B30A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src\ProjectBicep.WebApi", "src\ProjectBicep.WebApi\ProjectBicep.WebApi.csproj", "{436E7189-E096-42AB-AF4B-78D2D653B30A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{B55BDE83-06E2-448A-8651-5E0D747EBB7D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B55BDE83-06E2-448A-8651-5E0D747EBB7D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{4EA8E271-C6BF-4B49-B8D4-C4CA649C7088}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{4EA8E271-C6BF-4B49-B8D4-C4CA649C7088}"
 	ProjectSection(SolutionItems) = preProject
 		infra\main.bicep = infra\main.bicep
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{DA73282D-72C5-4FEB-AE89-9280A7379FF3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{DA73282D-72C5-4FEB-AE89-9280A7379FF3}"
 	ProjectSection(SolutionItems) = preProject
 		infra\modules\storage.bicep = infra\modules\storage.bicep
 		infra\modules\resource-group.bicep = infra\modules\resource-group.bicep
 		infra\modules\app-service.bicep = infra\modules\app-service.bicep
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Parameters", "Parameters", "{4458D58B-1F76-40A6-B057-C818C0FBAB93}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "parameters", "parameters", "{4458D58B-1F76-40A6-B057-C818C0FBAB93}"
 	ProjectSection(SolutionItems) = preProject
 		infra\parameters\dev.json = infra\parameters\dev.json
 		infra\parameters\test.json = infra\parameters\test.json
