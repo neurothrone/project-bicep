@@ -34,6 +34,18 @@
     },
     "appServiceHttpsOnly": {
       "value": true
+    },
+    "keyVaultSkuName": {
+      "value": "standard"
+    },
+    "keyVaultSkuFamily": {
+      "value": "A"
+    },
+    "keyVaultEnabledForDeployment": {
+      "value": true
+    },
+    "keyVaultEnabledForTemplateDeployment": {
+      "value": true
     }
   }
 }

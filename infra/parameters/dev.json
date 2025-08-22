@@ -46,9 +46,6 @@
     },
     "keyVaultEnabledForTemplateDeployment": {
       "value": true
-    },
-    "keyVaultHttpsOnly": {
-      "value": true
     }
   }
 }
