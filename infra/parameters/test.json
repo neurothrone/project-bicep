@@ -57,7 +57,8 @@
       "value": {
         "owner": "Neurothrone",
         "environment": "dev",
-        "costCenter": "IT"
+        "costCenter": "IT",
+        "deployedBy": "Bicep"
       }
     }
   }
