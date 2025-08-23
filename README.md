@@ -42,6 +42,27 @@ az deployment sub create \
 
 ## Tips
 
+### Bicep
+
+#### Useful links
+
+- https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/
+- https://learn.microsoft.com/en-us/azure/templates/
+- https://azure.github.io/bicep/
+
+### Key Vault secret names
+
+Azure Key Vault secret names must follow these rules:
+
+- Can contain only alphanumeric characters and dashes (-)
+- Cannot use underscores (_), spaces, or special characters
+- Must be between 1 and 127 characters
+- Are case-insensitive
+
+#### Links
+
+- https://learn.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates
+
 ### Purge the Key Vaults
 
 If, like me, you have been a bit too enthusiastic with your key vault experiments and now face conflicts, you can purge
@@ -52,3 +73,4 @@ az keyvault list-deleted
 
 az keyvault purge --name <keyvault-name>
 ```
+
