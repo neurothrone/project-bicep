@@ -164,6 +164,7 @@ module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
     principalId: appServiceModule.outputs.principalIdOutput
     secretsPermissions: secretsPermissions
   }
+  dependsOn: [keyVaultModule]
 }
 
 module appServiceAutoscale 'modules/app-service-autoscale.bicep' = if (environment == 'prod') {
