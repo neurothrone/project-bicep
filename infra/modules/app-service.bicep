@@ -107,7 +107,7 @@ output webAppNameOutput string = appServiceApp.name
 output defaultHostNameOutput string = appServiceApp.properties.defaultHostName
 
 @description('The URL of the Web App')
-output webAppUrlOutput string = 'https://${appServiceApp.properties.defaultHostName}'
+output webAppUrlOutput string = '${httpsOnly ? 'https' : 'http'}://${appServiceApp.properties.defaultHostName}'
 
 @description('The principal ID of the Web App identity')
 output principalIdOutput string = appServiceApp.identity.principalId
