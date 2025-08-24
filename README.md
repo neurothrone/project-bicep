@@ -53,18 +53,65 @@ az deployment sub create \
 - https://learn.microsoft.com/en-us/azure/templates/
 - https://azure.github.io/bicep/
 
-### Key Vault secret names
+### Secrets
+
+#### Key Vault secret names
 
 Azure Key Vault secret names must follow these rules:
 
-- Can contain only alphanumeric characters and dashes (-)
-- Cannot use underscores (_), spaces, or special characters
+- Can contain only alphanumeric characters and dashes (\-)
+- Cannot use underscores (\_), spaces, or special characters
 - Must be between 1 and 127 characters
 - Are case-insensitive
 
-#### Links
+Examples:
+
+- **Valid**: `favorite-color`, `color1`
+- **Invalid**: `favorite_color`, `COLOR VALUE`
+
+##### Links
 
 - https://learn.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates
+
+#### App settings (Web App) name rules
+
+App settings names must follow these rules:
+
+- Can contain only letters, numbers (0–9), periods (.), and underscores (_)
+- Dashes (\-) are not allowed
+
+Examples:
+
+- **Valid**: `FAVORITE_COLOR`, `favoriteColor`
+- **Invalid**: `favorite-color`
+
+##### Links
+
+- https://learn.microsoft.com/en-us/azure/app-service/configure-common#configure-app-settings
+
+#### One name that works for both (recommended)
+
+If you use the same key as the Key Vault secret name and the App Service app setting (Key Vault reference), pick a
+format valid for both:
+
+- Use letters and numbers only (e.g., camelCase)
+- **Recommended**: `favoriteColor`, `secretColor`
+- **Avoid**: `SECRET_COLOR` (Key Vault rejects \_), `SECRET-COLOR` (App settings reject \-)
+
+### What‑If noise around Key Vault
+
+What‑If can show false positives for Key Vault and app settings that reference it. Here are some of the issues that you
+can expect to see:
+
+- ***Symptom***: `.../accessPolicies/add (Unsupported)`:
+    - ***Why***: What‑If cannot read `accessPolicies` when the parent Key Vault is not yet created, and this child type does
+      not fully support What‑If.
+    - ***Impact***: Not a deployment failure.
+
+- ***Symptom***: `NestedDeploymentShortCircuited ... invalid copy count [length(parameters('secretsObject').secrets)]`
+    - ***Why***: `secretsObject` is marked `@secure()`. What‑If cannot evaluate the length of secure parameters before
+      deployment.
+    - ***Impact***: Not a deployment failure; the loop runs during deployment.
 
 ### Purge the Key Vaults
 
@@ -76,4 +123,3 @@ az keyvault list-deleted
 
 az keyvault purge --name <keyvault-name>
 ```
-
