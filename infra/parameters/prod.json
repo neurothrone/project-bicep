@@ -20,6 +20,9 @@
     "storageKind": {
       "value": "StorageV2"
     },
+    "appServiceAppName": {
+      "value": "project-bicep-app"
+    },
     "appServicePlanName": {
       "value": "project-bicep-app-plan"
     },
@@ -28,9 +31,6 @@
     },
     "appServiceCapacity": {
       "value": 1
-    },
-    "appServiceSiteName": {
-      "value": "project-bicep-app"
     },
     "appServiceHttpsOnly": {
       "value": true

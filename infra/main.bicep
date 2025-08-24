@@ -35,6 +35,9 @@ param storageSku string
 ])
 param storageKind string
 
+@description('App Service App name')
+param appServiceAppName string
+
 @description('App Service Plan name')
 param appServicePlanName string
 
@@ -44,9 +47,6 @@ param appServicePlanSku string
 
 @description('App Service Plan capacity (instances)')
 param appServiceCapacity int
-
-@description('App Service (site) name')
-param appServiceSiteName string
 
 @description('Enforce HTTPS for the App Service')
 param appServiceHttpsOnly bool
@@ -94,7 +94,7 @@ param resourceTags object
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
 var appServicePlanNameFull = '${appServicePlanName}-${environment}'
-var appServiceAppNameFull = '${appServiceSiteName}-${environment}'
+var appServiceAppNameFull = '${appServiceAppName}-${environment}'
 var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
 
 // !: --- Modules ---
