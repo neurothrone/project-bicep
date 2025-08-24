@@ -4,8 +4,11 @@ targetScope = 'resourceGroup'
 @description('Location for the App Service resources')
 param location string
 
+@description('App Service (Web App) name')
+param appServiceAppName string
+
 @description('App Service Plan name')
-param planName string
+param appServicePlanName string
 
 @description('App Service Plan SKU name')
 @allowed(['F1', 'B1', 'S1'])
@@ -13,9 +16,6 @@ param skuName string
 
 @description('App Service Plan capacity (instances)')
 param capacity int
-
-@description('App Service (Web App) name')
-param siteName string
 
 @description('Enforce HTTPS for the Web App')
 param httpsOnly bool
@@ -61,7 +61,7 @@ var secretAppSettings = reduce(
 
 // !: --- Resources ---
 resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
-  name: planName
+  name: appServicePlanName
   location: location
   sku: {
     name: skuName
@@ -74,8 +74,8 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
   tags: tags
 }
 
-resource webApp 'Microsoft.Web/sites@2024-11-01' = {
-  name: siteName
+resource appServiceApp 'Microsoft.Web/sites@2024-11-01' = {
+  name: appServiceAppName
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -90,8 +90,8 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
   tags: tags
 }
 
-resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
-  parent: webApp
+resource appServiceAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
+  parent: appServiceApp
   name: 'appsettings'
   properties: union(staticAppSettings, secretAppSettings)
 }
@@ -101,13 +101,13 @@ resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
 output appServicePlanIdOutput string = appServicePlan.id
 
 @description('The name of the Web App')
-output webAppNameOutput string = webApp.name
+output webAppNameOutput string = appServiceApp.name
 
 @description('Default host name of the Web App')
-output defaultHostNameOutput string = webApp.properties.defaultHostName
+output defaultHostNameOutput string = appServiceApp.properties.defaultHostName
 
 @description('The URL of the Web App')
-output webAppUrlOutput string = 'https://${webApp.properties.defaultHostName}'
+output webAppUrlOutput string = 'https://${appServiceApp.properties.defaultHostName}'
 
 @description('The principal ID of the Web App identity')
-output principalId string = webApp.identity.principalId
+output principalIdOutput string = appServiceApp.identity.principalId

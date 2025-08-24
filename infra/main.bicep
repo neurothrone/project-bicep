@@ -146,10 +146,10 @@ module appServiceModule 'modules/app-service.bicep' = {
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    planName: appServicePlanNameFull
+    appServiceAppName: webAppNameFull
+    appServicePlanName: appServicePlanNameFull
     skuName: appServicePlanSku
     capacity: appServiceCapacity
-    siteName: webAppNameFull
     httpsOnly: appServiceHttpsOnly
     environment: environment
     storageName: storageModule.outputs.nameOutput
@@ -165,7 +165,7 @@ module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
   scope: resourceGroup(resourceGroupFullName)
   params: {
     keyVaultName: keyVaultNameFull
-    principalId: appServiceModule.outputs.principalId
+    principalId: appServiceModule.outputs.principalIdOutput
     secretsPermissions: secretsPermissions
   }
 }
