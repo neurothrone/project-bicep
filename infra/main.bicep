@@ -13,11 +13,6 @@ param location string
 @allowed(['dev', 'test', 'prod'])
 param environment string
 
-@description('Storage account base name (3-7 lowercase letters and numbers)')
-@minLength(3)
-@maxLength(7)
-param storageBaseName string
-
 @description('Storage SKU')
 @allowed([
   'Standard_LRS'
@@ -93,6 +88,12 @@ param resourceTags object
 
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
+// Storage name cannot exceed 24 characters and can only contain
+// lowercase letters and numbers.
+// - storageBaseName is max 7 characters
+// - uniqueString is 13 characters
+// - environment is max 4 characters
+var storageNameFull = 'storage${uniqueString(subscription().id, resourceGroupFullName)}${environment}'
 var appServicePlanNameFull = '${appServicePlanName}-${environment}'
 var appServiceAppNameFull = '${appServiceAppName}-${environment}'
 var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
@@ -112,12 +113,7 @@ module storageModule 'modules/storage.bicep' = {
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    // Storage name cannot exceed 24 characters and can only contain
-    // lowercase letters and numbers.
-    // - storageBaseName is max 7 characters
-    // - uniqueString is 13 characters
-    // - environment is max 4 characters
-    name: '${storageBaseName}${uniqueString(subscription().id, resourceGroupFullName)}${environment}'
+    name: storageNameFull
     skuName: storageSku
     kind: storageKind
     tags: resourceTags

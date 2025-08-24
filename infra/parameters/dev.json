@@ -11,9 +11,6 @@
     "location": {
       "value": "swedencentral"
     },
-    "storageBaseName": {
-      "value": "storage"
-    },
     "storageSku": {
       "value": "Standard_LRS"
     },
