@@ -23,21 +23,24 @@ az deployment sub create \
   --location swedencentral \
   --template-file main.bicep \
   --parameters @infra/parameters/dev.json \
-  --parameters @infra/secrets.json
+  --parameters @infra/secrets.json \
+  --confirm-with-what-if
 
 # Create the resources for the test environment
 az deployment sub create \
   --location swedencentral \
   --template-file main.bicep \
   --parameters @infra/parameters/test.json \
-  --parameters @infra/secrets.json
+  --parameters @infra/secrets.json \
+  --confirm-with-what-if
 
 # Create the resources for the prod environment
 az deployment sub create \
   --location swedencentral \
   --template-file main.bicep \
   --parameters @infra/parameters/prod.json \
-  --parameters @infra/secrets.json
+  --parameters @infra/secrets.json \
+  --confirm-with-what-if
 ```
 
 ## Tips
