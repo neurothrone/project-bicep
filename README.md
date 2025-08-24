@@ -21,7 +21,7 @@ The commands below will create the resources for the dev, test and prod environm
 # Create the resources for the dev environment
 az deployment sub create \
   --location swedencentral \
-  --template-file main.bicep \
+  --template-file infra/main.bicep \
   --parameters @infra/parameters/dev.json \
   --parameters @infra/secrets.json \
   --confirm-with-what-if
@@ -29,7 +29,7 @@ az deployment sub create \
 # Create the resources for the test environment
 az deployment sub create \
   --location swedencentral \
-  --template-file main.bicep \
+  --template-file infra/main.bicep \
   --parameters @infra/parameters/test.json \
   --parameters @infra/secrets.json \
   --confirm-with-what-if
@@ -37,7 +37,7 @@ az deployment sub create \
 # Create the resources for the prod environment
 az deployment sub create \
   --location swedencentral \
-  --template-file main.bicep \
+  --template-file infra/main.bicep \
   --parameters @infra/parameters/prod.json \
   --parameters @infra/secrets.json \
   --confirm-with-what-if
