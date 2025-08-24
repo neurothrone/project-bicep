@@ -18,10 +18,10 @@
       "value": "StorageV2"
     },
     "appServiceAppName": {
-      "value": "project-bicep-app"
+      "value": "app-service-project-bicep"
     },
     "appServicePlanName": {
-      "value": "project-bicep-app-plan"
+      "value": "app-plan-project-bicep"
     },
     "appServicePlanSku": {
       "value": "S1"
