@@ -53,7 +53,7 @@
     "resourceTags": {
       "value": {
         "owner": "Neurothrone",
-        "environment": "dev",
+        "environment": "test",
         "costCenter": "IT",
         "deployedBy": "Bicep"
       }
