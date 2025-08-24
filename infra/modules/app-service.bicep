@@ -15,6 +15,8 @@ param appServicePlanName string
 param skuName string
 
 @description('App Service Plan capacity (instances)')
+@minValue(1)
+@maxValue(10)
 param capacity int
 
 @description('Enforce HTTPS for the Web App')
