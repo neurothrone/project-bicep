@@ -94,7 +94,7 @@ param resourceTags object
 // !: --- Variables ---
 var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
 var appServicePlanNameFull = '${appServicePlanName}-${environment}'
-var webAppNameFull = '${appServiceSiteName}-${environment}'
+var appServiceAppNameFull = '${appServiceSiteName}-${environment}'
 var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
 
 // !: --- Modules ---
@@ -146,7 +146,7 @@ module appServiceModule 'modules/app-service.bicep' = {
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    appServiceAppName: webAppNameFull
+    appServiceAppName: appServiceAppNameFull
     appServicePlanName: appServicePlanNameFull
     skuName: appServicePlanSku
     capacity: appServiceCapacity
