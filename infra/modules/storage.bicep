@@ -33,10 +33,10 @@ param tags object
 resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: name
   location: location
+  kind: kind
   sku: {
     name: skuName
   }
-  kind: kind
   tags: tags
 }
 
