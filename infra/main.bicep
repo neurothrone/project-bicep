@@ -1,10 +1,14 @@
+metadata name = 'Project Bicep'
+metadata author = 'Neurothrone'
+metadata description = 'Bicep template for deploying a resource group, storage account, App Service Plan, Web App, and Key Vault (with secrets), including autoscale and access configuration. Designed for flexible environments (dev, test, prod) with customizable parameters and tagging support.'
+
 targetScope = 'subscription'
 
 // !: --- Parameters ---
-@description('Name of the resource group to create.')
+@description('Name of the resource group to create')
 param resourceGroupName string
 
-@description('Primary location for all resources (deployment metadata location for subscription deployment).')
+@description('Primary location for all resources (deployment metadata location for subscription deployment)')
 param location string
 
 @description('Environment suffix (e.g. dev, test, prod)')
