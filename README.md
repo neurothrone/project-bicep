@@ -21,25 +21,25 @@ The commands below will create the resources for the dev, test and prod environm
 # Create the resources for the dev environment
 az deployment sub create \
   --location swedencentral \
-  --template-file infra/main.bicep \
-  --parameters @infra/parameters/dev.json \
-  --parameters @infra/secrets.json \
+  --template-file infra-v2/main.bicep \
+  --parameters @infra-v2/parameters/dev.json \
+  --parameters @infra-v2/parameters/secrets.json \
   --confirm-with-what-if
 
 # Create the resources for the test environment
 az deployment sub create \
   --location swedencentral \
-  --template-file infra/main.bicep \
-  --parameters @infra/parameters/test.json \
-  --parameters @infra/secrets.json \
+  --template-file infra-v2/main.bicep \
+  --parameters @infra-v2/parameters/test.json \
+  --parameters @infra-v2/parameters/secrets.json \
   --confirm-with-what-if
 
 # Create the resources for the prod environment
 az deployment sub create \
   --location swedencentral \
-  --template-file infra/main.bicep \
-  --parameters @infra/parameters/prod.json \
-  --parameters @infra/secrets.json \
+  --template-file infra-v2/main.bicep \
+  --parameters @infra-v2/parameters/prod.json \
+  --parameters @infra-v2/parameters/secrets.json \
   --confirm-with-what-if
 ```
 
@@ -104,7 +104,8 @@ What‑If can show false positives for Key Vault and app settings that reference
 can expect to see:
 
 - ***Symptom***: `.../accessPolicies/add (Unsupported)`:
-    - ***Why***: What‑If cannot read `accessPolicies` when the parent Key Vault is not yet created, and this child type does
+    - ***Why***: What‑If cannot read `accessPolicies` when the parent Key Vault is not yet created, and this child type
+      does
       not fully support What‑If.
     - ***Impact***: Not a deployment failure.
 
