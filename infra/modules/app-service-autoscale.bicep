@@ -1,38 +1,69 @@
 targetScope = 'resourceGroup'
 
+// !: --- Types ---
+type appServiceAutoScaleProfileType = {
+  @description('Name of the autoscale profile')
+  name: string
+
+  @description('Capacity settings for the autoscale profile')
+  capacity: {
+    minimum: string
+    maximum: string
+    default: string
+  }
+
+  @description('CPU percentage threshold to scale out')
+  scaleOutThreshold: int
+
+  @description('CPU percentage threshold to scale in')
+  scaleInThreshold: int
+}
+
+@export()
+type appServiceAutoscaleSettingsType = {
+  @description('Indicates whether autoscale is enabled for the App Service Plan')
+  appServiceAutoscaleIsEnabled: bool
+
+  @description('Autoscale profile settings for the App Service Plan')
+  appServiceAutoscaleProfile: appServiceAutoScaleProfileType
+}
+
 // !: --- Parameters ---
-@description('Location for the App Service resources')
+@description('Location for the Key Vault and resources.')
 param location string
 
-@description('Name of the App Service Plan to create autoscale settings for')
+@description('Name of the Autoscale Setting to create')
+param autoscaleSettingName string
+
+@description('Name of an existing App Service Plan to apply the autoscale settings to')
 param appServicePlanName string
 
-@description('Minimum number of instances for autoscale')
-param minCapacity int
+@description('Settings for configuring autoscale on the App Service Plan')
+param settings appServiceAutoscaleSettingsType
 
-@description('Maximum number of instances for autoscale')
-param maxCapacity int
+@description('Tags to apply to the resource')
+param tags object
 
 // !: --- Variables ---
 var appServicePlanResourceId = resourceId('Microsoft.Web/serverfarms', appServicePlanName)
 
 // !: --- Resources ---
 resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
-  name: 'autoscale-${appServicePlanName}'
+  name: autoscaleSettingName
   location: location
   properties: {
-    enabled: true
+    enabled: settings.appServiceAutoscaleIsEnabled
     targetResourceUri: appServicePlanResourceId
     profiles: [
       {
-        name: 'Default'
+        name: settings.appServiceAutoscaleProfile.name
         capacity: {
-          minimum: string(minCapacity)
-          maximum: string(maxCapacity)
-          default: string(minCapacity)
+          minimum: settings.appServiceAutoscaleProfile.capacity.minimum
+          maximum: settings.appServiceAutoscaleProfile.capacity.maximum
+          default: settings.appServiceAutoscaleProfile.capacity.default
         }
         rules: [
-          // Scale out on high CPU usage (>70%)
+          // Scale out on high CPU usage
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
@@ -42,7 +73,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
               timeWindow: 'PT5M'
               timeAggregation: 'Average'
               operator: 'GreaterThan'
-              threshold: 70
+              threshold: settings.appServiceAutoscaleProfile.scaleOutThreshold
             }
             scaleAction: {
               direction: 'Increase'
@@ -51,7 +82,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
               cooldown: 'PT5M'
             }
           }
-          // Scale in on low CPU usage (<30%)
+          // Scale in on low CPU usage
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
@@ -61,7 +92,7 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
               timeWindow: 'PT5M'
               timeAggregation: 'Average'
               operator: 'LessThan'
-              threshold: 30
+              threshold: settings.appServiceAutoscaleProfile.scaleInThreshold
             }
             scaleAction: {
               direction: 'Decrease'
@@ -74,4 +105,5 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2022-10-01' = {
       }
     ]
   }
+  tags: tags
 }
