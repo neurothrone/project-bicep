@@ -1,5 +1,24 @@
 targetScope = 'resourceGroup'
 
+//!: --- Types ---
+type keyVaultSkuNameType = 'standard' | 'premium'
+type keyVaultSkuFamilyType = 'A' | 'B'
+
+@export()
+type keyVaultSettingsType = {
+  @description('SKU name for the Key Vault.')
+  keyVaultSkuName: keyVaultSkuNameType
+
+  @description('SKU family for the Key Vault')
+  keyVaultSkuFamily: keyVaultSkuFamilyType
+
+  @description('Enable Key Vault for deployment')
+  keyVaultEnabledForDeployment: bool
+
+  @description('Enable Key Vault for template deployment')
+  keyVaultEnabledForTemplateDeployment: bool
+}
+
 //!: --- Parameters ---
 @description('Location for the Key Vault and resources.')
 param location string
@@ -7,29 +26,12 @@ param location string
 @description('Name of the Key Vault to create.')
 param keyVaultName string
 
-@description('SKU name for the Key Vault.')
-@allowed([
-  'standard'
-  'premium'
-])
-param skuName string
-
-@description('SKU family for the Key Vault')
-@allowed([
-  'A'
-  'B'
-])
-param skuFamily string
-
-@description('Enable Key Vault for deployment')
-param enabledForDeployment bool
-
-@description('Enable Key Vault for template deployment')
-param enabledForTemplateDeployment bool
-
 @description('Secrets to create in the Key Vault')
 @secure()
 param secretsObject object
+
+@description('Settings for the Key Vault')
+param settings keyVaultSettingsType
 
 @description('Tags to apply to the resource')
 param tags object
@@ -39,11 +41,11 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-11-01' = {
   name: keyVaultName
   location: location
   properties: {
-    enabledForDeployment: enabledForDeployment
-    enabledForTemplateDeployment: enabledForTemplateDeployment
+    enabledForDeployment: settings.keyVaultEnabledForDeployment
+    enabledForTemplateDeployment: settings.keyVaultEnabledForTemplateDeployment
     sku: {
-      name: skuName
-      family: skuFamily
+      name: settings.keyVaultSkuName
+      family: settings.keyVaultSkuFamily
     }
     tenantId: subscription().tenantId
     accessPolicies: []
