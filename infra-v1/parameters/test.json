@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "test"
+    },
+    "resourceGroupName": {
+      "value": "project-bicep"
+    },
+    "location": {
+      "value": "swedencentral"
+    },
+    "storageSku": {
+      "value": "Standard_LRS"
+    },
+    "storageKind": {
+      "value": "StorageV2"
+    },
+    "appServiceAppName": {
+      "value": "app-service-project-bicep"
+    },
+    "appServicePlanName": {
+      "value": "app-plan-project-bicep"
+    },
+    "appServicePlanSku": {
+      "value": "B1"
+    },
+    "appServiceCapacity": {
+      "value": 1
+    },
+    "appServiceHttpsOnly": {
+      "value": true
+    },
+    "keyVaultSkuName": {
+      "value": "standard"
+    },
+    "keyVaultSkuFamily": {
+      "value": "A"
+    },
+    "keyVaultEnabledForDeployment": {
+      "value": true
+    },
+    "keyVaultEnabledForTemplateDeployment": {
+      "value": true
+    },
+    "appServicePlanMinCapacity": {
+      "value": 1
+    },
+    "appServicePlanMaxCapacity": {
+      "value": 3
+    },
+    "resourceTags": {
+      "value": {
+        "owner": "Neurothrone",
+        "environment": "prod",
+        "costCenter": "IT",
+        "deployedBy": "Bicep"
+      }
+    }
+  }
+}

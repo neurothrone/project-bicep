@@ -1,0 +1,24 @@
+{
+  "analyzers": {
+    "enabled": true,
+    "core": {
+      "rules": {
+        "no-unused-imports": {
+          "level": "error"
+        },
+        "no-unused-params": {
+          "level": "error"
+        },
+        "no-unused-vars": {
+          "level": "warning"
+        },
+        "no-hardcoded-location": {
+          "level": "error"
+        },
+        "outputs-should-not-contain-secrets": {
+          "level": "error"
+        }
+      }
+    }
+  }
+}
