@@ -1,19 +1,19 @@
 targetScope = 'subscription'
 
 // !: --- Parameters ---
+@description('Deployment location (must be a valid Azure region)')
+param location string
+
 @description('Name of the resource group to create')
 @minLength(1)
-param name string
-
-@description('Location for the resource group')
-param location string
+param resourceGroupName string
 
 @description('Tags to apply to the resource')
 param tags object
 
 // !: --- Resources ---
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
-  name: name
+  name: resourceGroupName
   location: location
   tags: tags
 }
