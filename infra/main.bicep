@@ -4,73 +4,31 @@ metadata description = 'Bicep template for deploying a resource group, storage a
 
 targetScope = 'subscription'
 
-// !: --- Parameters ---
-@description('Name of the resource group to create')
-param resourceGroupName string
+// !: --- Imports ---
+import { environmentType, tagsType } from 'types.bicep'
+import { storageSettingsType } from './modules/storage.bicep'
+import { keyVaultSettingsType } from './modules/key-vault.bicep'
+import { appServiceSettingsType } from './modules/app-service.bicep'
+import { appServiceAutoscaleSettingsType } from './modules/app-service-autoscale.bicep'
 
-@description('Primary location for all resources (deployment metadata location for subscription deployment)')
+// !: --- Parameters ---
+@description('Environment name, e.g., dev, test, prod')
+param environment environmentType
+
+@description('Deployment location (must be a valid Azure region)')
 param location string
 
-@description('Environment suffix (e.g. dev, test, prod)')
-@minLength(3)
-@maxLength(4)
-@allowed(['dev', 'test', 'prod'])
-param environment string
+@description('Settings for the Storage Account')
+param storageSettings storageSettingsType
 
-@description('Storage SKU')
-@allowed([
-  'Standard_LRS'
-  'Standard_GRS'
-  'Standard_ZRS'
-  'Premium_LRS'
-])
-param storageSku string
+@description('Settings for the Key Vault')
+param keyVaultSettings keyVaultSettingsType
 
-@description('Storage kind')
-@allowed([
-  'StorageV2'
-  'FileStorage'
-  'BlockBlobStorage'
-])
-param storageKind string
+@description('Settings for the App Service Plan and Web App')
+param appServiceSettings appServiceSettingsType
 
-@description('App Service App name')
-param appServiceAppName string
-
-@description('App Service Plan name')
-param appServicePlanName string
-
-@description('App Service Plan SKU name')
-@allowed(['B1', 'S1'])
-param appServicePlanSku string
-
-@description('App Service Plan capacity (instances)')
-@minValue(1)
-@maxValue(10)
-param appServiceCapacity int
-
-@description('Enforce HTTPS for the App Service')
-param appServiceHttpsOnly bool
-
-@description('SKU name for the Key Vault')
-@allowed([
-  'standard'
-  'premium'
-])
-param keyVaultSkuName string
-
-@description('SKU family for the Key Vault')
-@allowed([
-  'A'
-  'B'
-])
-param keyVaultSkuFamily string
-
-@description('Enable Key Vault for deployment')
-param keyVaultEnabledForDeployment bool
-
-@description('Enable Key Vault for template deployment')
-param keyVaultEnabledForTemplateDeployment bool
+@description('Settings for the App Service Plan autoscale (only applied in prod environment)')
+param appServiceAutoscaleSettings appServiceAutoscaleSettingsType
 
 @description('Secrets to create in the Key Vault')
 @secure()
@@ -83,47 +41,59 @@ param secretsObject object
 ])
 param secretsPermissions array
 
-@description('Minimum number of App Service Plan instances when autoscale is enabled')
-param appServicePlanMinCapacity int
-
-@description('Maximum number of App Service Plan instances when autoscale is enabled')
-param appServicePlanMaxCapacity int
-
 @description('Tags to apply to all resources')
-param resourceTags object
+param resourceTags tagsType
+
+@description('Solution name to be used in resource naming (alphanumeric, lowercase)')
+param solutionName string = 'bicep'
+
+@description('Timestamp to ensure unique resource names (format: yyyyMMddHHmmss)')
+param deploymentTimestamp string = utcNow('yyyyMMddHHmmss')
 
 // !: --- Variables ---
-var resourceGroupFullName = 'rg-${resourceGroupName}-${environment}'
-// Storage name cannot exceed 24 characters and can only contain
-// lowercase letters and numbers.
-// - storageBaseName is max 7 characters
-// - uniqueString is 13 characters
-// - environment is max 4 characters
-var storageNameFull = 'storage${uniqueString(subscription().id, resourceGroupFullName)}${environment}'
-var appServicePlanNameFull = '${appServicePlanName}-${environment}'
-var appServiceAppNameFull = '${appServiceAppName}-${environment}'
-var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
+var resourceGroupBaseName = 'rg-${solutionName}-${uniqueString(subscription().id)}'
+var resourceGroupFullName = '${resourceGroupBaseName}-${environment}'
+var resourceGroupModuleName = '${resourceGroupBaseName}-${deploymentTimestamp}-${environment}'
+
+var storageAccountBaseName = 'stg${uniqueString(subscription().id, resourceGroupFullName)}'
+var storageAccountFullName = '${storageAccountBaseName}${environment}'
+var storageModuleFullName = '${storageAccountBaseName}-${deploymentTimestamp}-${environment}'
+
+var appServicePlanFullName = 'asp-${solutionName}-${uniqueString(subscription().id)}-${environment}'
+var appServiceAppBaseName = 'app-${solutionName}-${uniqueString(subscription().id)}'
+var appServiceAppFullName = '${appServiceAppBaseName}-${environment}'
+var appServiceModuleName = '${appServiceAppBaseName}-${deploymentTimestamp}-${environment}'
+
+var keyVaultFullName = 'kv${solutionName}${uniqueString(subscription().id)}${environment}'
+var keyVaultModuleName = 'kv-${solutionName}-${deploymentTimestamp}-${environment}'
+
+var keyVaultAccessModuleName = 'kv-access-${solutionName}-${deploymentTimestamp}-${environment}'
+
+var appServiceAutoscaleBaseName = 'app-autoscale-${solutionName}'
+var appServiceAutoscaleSettingsName = '${appServiceAutoscaleBaseName}-${environment}'
+var appServiceAutoscaleModuleName = '${appServiceAutoscaleBaseName}-${deploymentTimestamp}-${environment}'
+
+var secretNames = [for secret in secretsObject.secrets: secret.secretName]
 
 // !: --- Modules ---
 @description('Module to create the Resource Group')
 module resourceGroupModule 'modules/resource-group.bicep' = {
-  name: 'resourceGroupModule'
+  name: resourceGroupModuleName
   params: {
-    name: resourceGroupFullName
     location: location
+    resourceGroupName: resourceGroupFullName
     tags: resourceTags
   }
 }
 
 @description('Module to create the Storage Account')
 module storageModule 'modules/storage.bicep' = {
-  name: 'storageModule'
+  name: storageModuleFullName
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    name: storageNameFull
-    skuName: storageSku
-    kind: storageKind
+    storageAccountName: storageAccountFullName
+    settings: storageSettings
     tags: resourceTags
   }
   dependsOn: [resourceGroupModule]
@@ -131,16 +101,13 @@ module storageModule 'modules/storage.bicep' = {
 
 @description('Module to create the Key Vault and its secrets')
 module keyVaultModule 'modules/key-vault.bicep' = {
-  name: 'keyVaultModule'
+  name: keyVaultModuleName
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    keyVaultName: keyVaultNameFull
-    skuName: keyVaultSkuName
-    skuFamily: keyVaultSkuFamily
-    enabledForDeployment: keyVaultEnabledForDeployment
-    enabledForTemplateDeployment: keyVaultEnabledForTemplateDeployment
+    keyVaultName: keyVaultFullName
     secretsObject: secretsObject
+    settings: keyVaultSettings
     tags: resourceTags
   }
   dependsOn: [resourceGroupModule]
@@ -148,19 +115,16 @@ module keyVaultModule 'modules/key-vault.bicep' = {
 
 @description('Module to create the App Service Plan and Web App')
 module appServiceModule 'modules/app-service.bicep' = {
-  name: 'appServiceModule'
+  name: appServiceModuleName
   scope: resourceGroup(resourceGroupFullName)
   params: {
-    location: location
-    appServiceAppName: appServiceAppNameFull
-    appServicePlanName: appServicePlanNameFull
-    skuName: appServicePlanSku
-    capacity: appServiceCapacity
-    httpsOnly: appServiceHttpsOnly
     environment: environment
-    storageName: storageModule.outputs.nameOutput
-    keyVaultName: keyVaultNameFull
-    secretsObject: secretsObject
+    location: location
+    appServiceAppName: appServiceAppFullName
+    appServicePlanName: appServicePlanFullName
+    keyVaultName: keyVaultFullName
+    secretNames: secretNames
+    settings: appServiceSettings
     tags: resourceTags
   }
   dependsOn: [resourceGroupModule, keyVaultModule]
@@ -168,10 +132,10 @@ module appServiceModule 'modules/app-service.bicep' = {
 
 @description('Module to grant the Web App access to the Key Vault')
 module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
-  name: 'keyVaultAccessModule'
+  name: keyVaultAccessModuleName
   scope: resourceGroup(resourceGroupFullName)
   params: {
-    keyVaultName: keyVaultNameFull
+    keyVaultName: keyVaultFullName
     principalId: appServiceModule.outputs.principalIdOutput
     secretsPermissions: secretsPermissions
   }
@@ -180,13 +144,14 @@ module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
 
 @description('Module to configure autoscale for the App Service Plan (only in prod environment)')
 module appServiceAutoscale 'modules/app-service-autoscale.bicep' = if (environment == 'prod') {
-  name: 'appServiceAutoscale'
+  name: appServiceAutoscaleModuleName
   scope: resourceGroup(resourceGroupFullName)
   params: {
     location: location
-    appServicePlanName: appServicePlanNameFull
-    minCapacity: appServicePlanMinCapacity
-    maxCapacity: appServicePlanMaxCapacity
+    autoscaleSettingName: appServiceAutoscaleSettingsName
+    appServicePlanName: appServicePlanFullName
+    settings: appServiceAutoscaleSettings
+    tags: resourceTags
   }
   dependsOn: [appServiceModule]
 }
