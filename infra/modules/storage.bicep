@@ -37,6 +37,13 @@ resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   sku: {
     name: skuName
   }
+  // TODO: explore properties
+  //   properties: {
+  //     accessTier: 'Hot'
+  //     supportsHttpsTrafficOnly: true
+  //     allowBlobPublicAccess: true
+  //     minimumTlsVersion: 'TLS1_2'
+  //   }
   tags: tags
 }
 

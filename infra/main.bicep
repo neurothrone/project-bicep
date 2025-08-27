@@ -101,6 +101,7 @@ var appServiceAppNameFull = '${appServiceAppName}-${environment}'
 var keyVaultNameFull = 'vault-${uniqueString(subscription().id, resourceGroupFullName)}-${environment}'
 
 // !: --- Modules ---
+@description('Module to create the Resource Group')
 module resourceGroupModule 'modules/resource-group.bicep' = {
   name: 'resourceGroupModule'
   params: {
@@ -110,6 +111,7 @@ module resourceGroupModule 'modules/resource-group.bicep' = {
   }
 }
 
+@description('Module to create the Storage Account')
 module storageModule 'modules/storage.bicep' = {
   name: 'storageModule'
   scope: resourceGroup(resourceGroupFullName)
@@ -123,6 +125,7 @@ module storageModule 'modules/storage.bicep' = {
   dependsOn: [resourceGroupModule]
 }
 
+@description('Module to create the Key Vault and its secrets')
 module keyVaultModule 'modules/key-vault.bicep' = {
   name: 'keyVaultModule'
   scope: resourceGroup(resourceGroupFullName)
@@ -139,6 +142,7 @@ module keyVaultModule 'modules/key-vault.bicep' = {
   dependsOn: [resourceGroupModule]
 }
 
+@description('Module to create the App Service Plan and Web App')
 module appServiceModule 'modules/app-service.bicep' = {
   name: 'appServiceModule'
   scope: resourceGroup(resourceGroupFullName)
@@ -158,6 +162,7 @@ module appServiceModule 'modules/app-service.bicep' = {
   dependsOn: [resourceGroupModule, keyVaultModule]
 }
 
+@description('Module to grant the Web App access to the Key Vault')
 module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
   name: 'keyVaultAccessModule'
   scope: resourceGroup(resourceGroupFullName)
@@ -169,6 +174,7 @@ module keyVaultAccessModule 'modules/key-vault-access.bicep' = {
   dependsOn: [keyVaultModule]
 }
 
+@description('Module to configure autoscale for the App Service Plan (only in prod environment)')
 module appServiceAutoscale 'modules/app-service-autoscale.bicep' = if (environment == 'prod') {
   name: 'appServiceAutoscale'
   scope: resourceGroup(resourceGroupFullName)
