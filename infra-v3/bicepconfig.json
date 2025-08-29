@@ -1,6 +1,7 @@
 {
   "analyzers": {
     "enabled": true,
+    "verbose": true,
     "core": {
       "rules": {
         "no-unused-imports": {
