@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "prod"
+    },
+    "location": {
+      "value": "swedencentral"
+    },
+    "resourceTags": {
+      "value": {
+        "environment": "test",
+        "project": "bicep",
+        "owner": "Neurothrone",
+        "costCenter": "IT",
+        "deployedBy": "Bicep"
+      }
+    },
+    "storageSettings": {
+      "value": {
+        "storageAccountSku": "Standard_LRS",
+        "storageAccountKind": "StorageV2"
+      }
+    },
+    "keyVaultSettings": {
+      "value": {
+        "keyVaultSkuName": "standard",
+        "keyVaultSkuFamily": "A",
+        "keyVaultEnabledForDeployment": true,
+        "keyVaultEnabledForTemplateDeployment": true
+      }
+    },
+    "appServiceSettings": {
+      "value": {
+        "appServicePlanSku": {
+          "appServiceSkuName": "S1",
+          "appServiceSkuTier": "Standard"
+        },
+        "appServicePlanInstanceCount": 1,
+        "appServiceIsLinux": true,
+        "appServiceHttpsOnly": true
+      }
+    },
+    "appServiceAutoscaleSettings": {
+      "value": {
+        "location": "swedencentral",
+        "appServiceAutoscaleIsEnabled": true,
+        "appServiceAutoscaleProfile": {
+          "name": "prod-autoscale",
+          "capacity": {
+            "minimum": "1",
+            "maximum": "3",
+            "default": "1"
+          },
+          "scaleOutThreshold": 70,
+          "scaleInThreshold": 30
+        }
+      }
+    }
+  }
+}
